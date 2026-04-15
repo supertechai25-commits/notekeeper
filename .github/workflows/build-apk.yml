@@ -19,7 +19,13 @@ jobs:
       - name: Install Buildozer
         run: pip install --upgrade buildozer cython==0.29.33
       - name: Build APK
-        run: buildozer -v android debug
+        env:
+          ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
+          ANDROID_SDK_ROOT: /home/runner/.buildozer/android/platform/android-sdk
+        run: |
+          # Accept SDK licenses before building
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          buildozer -v android debug
       - uses: actions/upload-artifact@v4
         with:
           name: NoteKeeper-apk
