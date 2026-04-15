@@ -22,16 +22,15 @@ jobs:
       - name: Install system deps
         run: |
           sudo apt update
-          sudo apt -y install automake libltdl-dev
-      - name: Install buildozer and dependencies
+          sudo apt -y install automake libltdl-dev git
+      - name: Install buildozer from source
         run: |
           pip install --upgrade pip setuptools wheel
           pip install cython==0.29.36
-          pip install buildozer==0.43.1
-      - name: Initialize if needed and build
+          pip install git+https://github.com/kivy/buildozer.git@master
+      - name: Build
         run: |
           touch main.py
-          if [ ! -f buildozer.spec ]; then buildozer init; fi
           buildozer android debug
       - uses: actions/upload-artifact@v4
         with:
