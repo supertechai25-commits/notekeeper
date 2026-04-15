@@ -28,8 +28,9 @@ jobs:
           pip install buildozer
       - name: Setup SDK
         run: |
-          # Accept SDK license and configure buildozer
-          sed -i.bak "s/# android.accept_sdk_license = False/android.accept_sdk_license = True/" buildozer.spec
+          # Configure buildozer
+          sed -i "s/# p4a.branch = master/p4a.branch = develop/" buildozer.spec
+          sed -i "s/# android.accept_sdk_license = False/android.accept_sdk_license = True/" buildozer.spec
           buildozer android p4a -- --help
       - name: Build APK
         run: |
