@@ -1,0 +1,136 @@
+{
+  "notes": {
+    "784de5c2-013d-428c-8a97-b12d1de5b15d": {
+      "id": "784de5c2-013d-428c-8a97-b12d1de5b15d",
+      "owner_id": "user-1",
+      "type": "TEXT",
+      "title": "Trip plan",
+      "content": "Book tickets\nPack passport\nTODO confirm hotel",
+      "check_items": [],
+      "media_urls": [],
+      "labels": [
+        "Travel/2026"
+      ],
+      "color": "White",
+      "background_theme": null,
+      "is_pinned": false,
+      "is_archived": false,
+      "is_trashed": false,
+      "trashed_at": null,
+      "is_locked": false,
+      "numbering_enabled": true,
+      "reminder": {
+        "timestamp": null,
+        "location": null,
+        "recurrence": null
+      },
+      "collaborators": [],
+      "created_at": "2026-04-15T20:58:04.239765Z",
+      "last_edited": "2026-04-15T20:58:04.241579Z",
+      "versions": [
+        {
+          "timestamp": "2026-04-15T20:58:04.240649Z",
+          "reason": "create",
+          "title": "Trip plan",
+          "content": "Book tickets\nPack passport\nTODO confirm hotel",
+          "check_items": [],
+          "labels": [],
+          "color": "White"
+        },
+        {
+          "timestamp": "2026-04-15T20:58:04.241564Z",
+          "reason": "edit",
+          "title": "Trip plan",
+          "content": "Book tickets\nPack passport\nTODO confirm hotel",
+          "check_items": [],
+          "labels": [],
+          "color": "White"
+        }
+      ],
+      "cross_refs": [],
+      "patterns": {
+        "urls": [],
+        "emails": [],
+        "phones": [],
+        "dates": [],
+        "hashtags": [],
+        "mentions": [],
+        "has_todo": true,
+        "word_count": 9,
+        "sentiment_hint": "neutral"
+      },
+      "formatting": {
+        "bold": [],
+        "italic": [],
+        "underline": [],
+        "strikethrough": [],
+        "headings": []
+      }
+    },
+    "e0b7b10d-9034-4299-a34c-b296dacf9dd6": {
+      "id": "e0b7b10d-9034-4299-a34c-b296dacf9dd6",
+      "owner_id": "user-1",
+      "type": "CHECKLIST",
+      "title": "Groceries",
+      "content": "See [[784de5c2-013d-428c-8a97-b12d1de5b15d]] for context",
+      "check_items": [],
+      "media_urls": [],
+      "labels": [],
+      "color": "White",
+      "background_theme": null,
+      "is_pinned": false,
+      "is_archived": false,
+      "is_trashed": false,
+      "trashed_at": null,
+      "is_locked": false,
+      "numbering_enabled": false,
+      "reminder": {
+        "timestamp": null,
+        "location": null,
+        "recurrence": null
+      },
+      "collaborators": [],
+      "created_at": "2026-04-15T20:58:04.241085Z",
+      "last_edited": "2026-04-15T20:58:04.241085Z",
+      "versions": [
+        {
+          "timestamp": "2026-04-15T20:58:04.241090Z",
+          "reason": "create",
+          "title": "Groceries",
+          "content": "See [[784de5c2-013d-428c-8a97-b12d1de5b15d]] for context",
+          "check_items": [],
+          "labels": [],
+          "color": "White"
+        }
+      ],
+      "cross_refs": [
+        "784de5c2-013d-428c-8a97-b12d1de5b15d"
+      ],
+      "patterns": {
+        "urls": [],
+        "emails": [],
+        "phones": [],
+        "dates": [],
+        "hashtags": [],
+        "mentions": [],
+        "has_todo": false,
+        "word_count": 5,
+        "sentiment_hint": "neutral"
+      },
+      "formatting": {
+        "bold": [],
+        "italic": [],
+        "underline": [],
+        "strikethrough": [],
+        "headings": []
+      }
+    }
+  },
+  "session": {
+    "last_context": {
+      "time": "2026-04-15T20:58:04.241604Z",
+      "count": 2
+    }
+  },
+  "recall": []
+}
