@@ -17,29 +17,11 @@ jobs:
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf \
             libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 \
             cmake libffi-dev libssl-dev build-essential
-      - name: Install Android SDK
-        run: |
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          cd $HOME/android-sdk/cmdline-tools
-          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o cmdline-tools.zip
-          unzip -q cmdline-tools.zip
-          mv cmdline-tools latest
-          rm cmdline-tools.zip
-          
-          # Accept licenses
-          mkdir -p $HOME/android-sdk/licenses
-          printf "\n24333f8a63b6825ea9c5514f83c2829b004d1fee\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd975f751698a77b662f1254ddbeed3901e976f5a" > $HOME/android-sdk/licenses/android-sdk-license
-          printf "\n84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/android-sdk/licenses/android-sdk-preview-license
-          
-          # Install SDK components
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "platforms;android-34" "build-tools;34.0.0" "ndk;25b" "platform-tools"
-          
-          echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-      - name: Install Buildozer
-        run: pip install --upgrade buildozer cython==0.29.33
-      - name: Build APK
-        run: buildozer -v android debug
+      - name: Build Android APK
+        uses: ArtemSBulgakov/buildozer-action@v1
+        with:
+          command: android debug
+          buildozer_version: stable
       - uses: actions/upload-artifact@v4
         with:
           name: NoteKeeper-apk
