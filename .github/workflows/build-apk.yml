@@ -11,18 +11,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install system deps
+      - name: Show directory contents
         run: |
-          sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf \
-            libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 \
-            cmake libffi-dev libssl-dev build-essential
+          ls -la
+          ls -la *.py *.spec 2>/dev/null || true
       - name: Build Android APK
         uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
         with:
           command: android debug
           buildozer_version: stable
       - uses: actions/upload-artifact@v4
         with:
           name: NoteKeeper-apk
-          path: bin/*.apk
+          path: ${{ steps.buildozer.outputs.filename }}
