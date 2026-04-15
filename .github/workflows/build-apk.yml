@@ -31,20 +31,13 @@ jobs:
           echo -e "\nd975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_HOME/licenses/android-sdk-license
           echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" >> $ANDROID_HOME/licenses/android-sdk-license
           echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
-          echo "All licenses accepted"
           
           # Create tools/bin directory and symlinks
           mkdir -p $ANDROID_HOME/tools/bin
-          # Check if cmdline-tools exists
-          if [ -f "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
-            ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
-            ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager $ANDROID_HOME/tools/bin/avdmanager
-            echo "Created symlinks"
-          else
-            # cmdline-tools might be elsewhere, create placeholder
-            touch $ANDROID_HOME/tools/bin/sdkmanager
-            echo "cmdline-tools not found, skipping symlinks"
-          fi
+          ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
+          ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager $ANDROID_HOME/tools/bin/avdmanager
+          chmod +x $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
+          chmod +x $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager
           
           buildozer -v android debug
       - uses: actions/upload-artifact@v4
