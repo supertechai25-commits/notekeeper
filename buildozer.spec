@@ -17,6 +17,7 @@ android.build_tools_version = 34.0.0
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 android.allow_backup = True
 log_level = 2
+android.allow_backup = False
 
 p4a.python_cmd = /home/supertechnician/.venv/bin/python
 p4a.pip_cmd = /home/supertechnician/.venv/bin/pip --break-system-packages

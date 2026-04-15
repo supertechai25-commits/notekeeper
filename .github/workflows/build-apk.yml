@@ -5,6 +5,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -25,7 +26,11 @@ jobs:
         run: |
           # Accept SDK licenses before building
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          buildozer -v android debug
+          buildozer -v android debug || {
+            # Retry with clean build if first attempt fails
+            rm -rf .buildozer
+            buildozer -v android debug
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: NoteKeeper-apk
