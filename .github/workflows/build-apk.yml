@@ -2,19 +2,39 @@ name: Build APK
 on:
   push:
   workflow_dispatch:
+env:
+  PYTHONFORANDROID_PREREQUISITES_INSTALL_INTERACTIVE: 0
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Build with Buildozer Docker
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Install system deps
         run: |
-          docker run --rm \
-            -v $(pwd):/home/user/notekeeper \
-            -w /home/user/notekeeper \
-            kivy/buildozer:stable \
-            bash -c "touch main.py && buildozer android debug"
+          sudo apt update
+          sudo apt -y install automake libltdl-dev
+      - name: Install buildozer
+        run: |
+          pip install buildozer
+      - name: Setup SDK
+        run: |
+          # Accept SDK license and configure buildozer
+          sed -i.bak "s/# android.accept_sdk_license = False/android.accept_sdk_license = True/" buildozer.spec
+          buildozer android p4a -- --help
+      - name: Build APK
+        run: |
+          touch main.py
+          buildozer android debug
       - uses: actions/upload-artifact@v4
         with:
           name: NoteKeeper-apk
