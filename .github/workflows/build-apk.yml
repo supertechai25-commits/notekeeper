@@ -7,13 +7,13 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.x'
+          python-version: '3.11'
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
@@ -23,18 +23,15 @@ jobs:
         run: |
           sudo apt update
           sudo apt -y install automake libltdl-dev
-      - name: Install buildozer
+      - name: Install buildozer and dependencies
         run: |
-          pip install buildozer
-      - name: Setup SDK
-        run: |
-          # Configure buildozer
-          sed -i "s/# p4a.branch = master/p4a.branch = develop/" buildozer.spec
-          sed -i "s/# android.accept_sdk_license = False/android.accept_sdk_license = True/" buildozer.spec
-          buildozer android p4a -- --help
-      - name: Build APK
+          pip install --upgrade pip setuptools wheel
+          pip install cython==0.29.36
+          pip install buildozer==0.43.1
+      - name: Initialize if needed and build
         run: |
           touch main.py
+          if [ ! -f buildozer.spec ]; then buildozer init; fi
           buildozer android debug
       - uses: actions/upload-artifact@v4
         with:
