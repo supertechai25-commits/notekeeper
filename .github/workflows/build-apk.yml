@@ -19,27 +19,14 @@ jobs:
             cmake libffi-dev libssl-dev build-essential
       - name: Install Buildozer
         run: pip install --upgrade buildozer cython==0.29.33
+      - name: Set up Android SDK
+        uses: android-actions/setup-android-sdk@v1
+        with:
+          api-level: 34
+          build-tools: "34.0.0"
+          ndk-version: "25b"
       - name: Build APK
-        env:
-          ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
-          ANDROID_SDK_ROOT: /home/runner/.buildozer/android/platform/android-sdk
-        run: |
-          # Create license files to accept all SDK licenses
-          mkdir -p $ANDROID_HOME/licenses
-          echo -e "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
-          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" >> $ANDROID_HOME/licenses/android-sdk-license
-          echo -e "\nd975f751698a77b662f1254ddbeed3901e976f5a" >> $ANDROID_HOME/licenses/android-sdk-license
-          echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" >> $ANDROID_HOME/licenses/android-sdk-license
-          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
-          
-          # Create tools/bin directory and symlinks
-          mkdir -p $ANDROID_HOME/tools/bin
-          ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
-          ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager $ANDROID_HOME/tools/bin/avdmanager
-          chmod +x $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
-          chmod +x $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager
-          
-          buildozer -v android debug
+        run: buildozer -v android debug
       - uses: actions/upload-artifact@v4
         with:
           name: NoteKeeper-apk
