@@ -30,10 +30,20 @@ jobs:
           pip install --upgrade pip setuptools wheel
           pip install cython==0.29.36
           pip install git+https://github.com/kivy/python-for-android.git@v2024.01.21
+
+      - name: Install Android SDK Platform 34
+        run: |
+          pip install android-sdk
+          sdkmanager --install "platforms;android-34" || true
           
       - name: Create build recipe
+        env:
+          ANDROID_API: 34
         run: |
-          p4a create --arch arm64-v8a --android-api 34 --requirements python3,kivy --dir . --name notekeeper --package org.local.notekeeper
+          export ANDROID_API=34
+          echo "ANDROID_API=$ANDROID_API"
+          python -c "from pythonforandroid.util import get_api_level; print('Available API:', get_api_level())"
+          p4a create --arch arm64-v8a --android-api 34 --requirements python3,kivy --dir . --name notekeeper --package org.local.notekeeper --debug 2>&1
           
       - name: Find and upload APK
         run: |
