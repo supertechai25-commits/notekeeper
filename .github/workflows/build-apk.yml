@@ -29,11 +29,11 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install cython==0.29.36
-          pip install git+https://github.com/kivy/python-for-android.git@master
+          pip install git+https://github.com/kivy/python-for-android.git@v2024.01.21
           
       - name: Create build recipe
         run: |
-          p4a create --arch arm64-v8a --api 34 --android_api 34 --requirements python3,kivy --dir . --name notekeeper --package org.local.notekeeper
+          p4a create --arch arm64-v8a --android-api 34 --requirements python3,kivy --dir . --name notekeeper --package org.local.notekeeper
           
       - name: Find and upload APK
         run: |
