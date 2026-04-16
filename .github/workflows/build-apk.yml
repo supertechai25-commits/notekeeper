@@ -33,7 +33,7 @@ jobs:
           
       - name: Create build recipe
         run: |
-          p4a create --arch arm64-v8a --api 34 --requirements python3,kivy --dir . --name notekeeper --package org.local.notekeeper
+          p4a create --arch arm64-v8a --api 34 --android_api 34 --requirements python3,kivy --dir . --name notekeeper --package org.local.notekeeper
           
       - name: Find and upload APK
         run: |
