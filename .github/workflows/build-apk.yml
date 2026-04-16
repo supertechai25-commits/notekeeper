@@ -20,6 +20,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK 25b
+        run: |
+          sdkmanager --install "ndk;25.2.9519653" || true
+
       - name: Install dependencies
         run: |
           sudo apt update
@@ -33,6 +40,7 @@ jobs:
 
       - name: Create build recipe
         run: |
+          export ANDROIDNDK=/usr/local/lib/android/sdk/ndk/25.2.9519653
           p4a create --arch arm64-v8a --android-api 34 --ndk-api 21 --requirements python3,kivy --dir . --name notekeeper --package org.local.notekeeper 2>&1
 
       - name: Find and upload APK
