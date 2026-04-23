@@ -1,56 +1,129 @@
 name: Build APK
+
 on:
   push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    
+    env:
+      # Use cache for Android SDK and buildozer/p4a
+      ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+      ANDROID_NDK_HOME: ${{ ANDROID_SDK_ROOT }}/ndk/25.2.9519653
+      ANDROID_API_LEVEL: 34
+      ANDROID_NDK_API_LEVEL: 21
+      
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed for versioning if we use tags
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          ndk-version: 25b
+          cmdline-tools: latest
 
-      - name: Install NDK 25b
+      - name: Accept Android SDK licenses
         run: |
-          sdkmanager --install "ndk;25.2.9519653" || true
+          mkdir -p "$ANDROID_SDK_ROOT/licenses"
+          echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_SDK_ROOT/licenses/android-sdk-license"
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_SDK_ROOT/licenses/android-sdk-preview-license"
+          # For NDK
+          echo -e "\n609f86e5d6cef317f245c7f1a477ef59ea7c7537" >> "$ANDROID_SDK_ROOT/licenses/android-sdk-license"
+          echo -e "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" >> "$ANDROID_SDK_ROOT/licenses/android-sdk-license"
 
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libltdl-dev libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev build-essential
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libltdl-dev libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev build-essential
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install cython==0.29.36
 
       - name: Install python-for-android
         run: |
-          pip install --upgrade pip setuptools wheel
-          pip install cython==0.29.36
           pip install git+https://github.com/kivy/python-for-android.git@v2024.01.21
 
       - name: Create build recipe
         run: |
-          export ANDROIDNDK=/usr/local/lib/android/sdk/ndk/25.2.9519653
-          p4a create --arch arm64-v8a --android-api 34 --ndk-api 21 --requirements python3,kivy --dir . --name notekeeper --package org.local.notekeeper 2>&1
+          p4a create --debug \
+            --arch arm64-v8a \
+            --android-api ${{ env.ANDROID_API_LEVEL }} \
+            --ndk-api ${{ env.ANDROID_NDK_API_LEVEL }} \
+            --requirements python3,kivy \
+            --dir . \
+            --name notekeeper \
+            --package org.local.notekeeper \
+            --version 1.0.0 \
+            --bootstrap sdlkivy
 
-      - name: Find and upload APK
+      - name: Build APK (debug)
         run: |
-          find . -name "*.apk" -type f
-          ls -la *.apk 2>/dev/null || ls -la bin/*.apk 2>/dev/null || true
-        if: always()
+          p4a build --debug \
+            --arch arm64-v8a \
+            --android-api ${{ env.ANDROID_API_LEVEL }} \
+            --ndk-api ${{ env.ANDROID_NDK_API_LEVEL }} \
+            --requirements python3,kivy \
+            --dir . \
+            --name notekeeper \
+            --package org.local.notekeeper
 
-      - uses: actions/upload-artifact@v4
+      - name: Find and display APK
+        run: |
+          echo "Searching for APK..."
+          find . -name "*.apk" -type f -exec ls -lh {} \;
+          ls -la bin/*.apk 2>/dev/null || true
+          ls -la .buildozer/*/bin/*.apk 2>/dev/null || true
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: NoteKeeper-apk
+          name: NoteKeeper-apk-debug
           path: bin/*.apk
-          if-no-files-found: ignore
+          if-no-files-found: error
+          retention-days: 30
+
+      # Optional: Build release APK (commented out for faster CI)
+      # - name: Build APK (release)
+      #   run: |
+      #     p4a build --release \
+      #       --arch arm64-v8a \
+      #       --android-api ${{ env.ANDROID_API_LEVEL }} \
+      #       --ndk-api ${{ env.ANDROID_NDK_API_LEVEL }} \
+      #       --requirements python3,kivy \
+      #       --dir . \
+      #       --name notekeeper \
+      #       --package org.local.notekeeper \
+      #       --version 1.0.0
+      #
+      # - name: Upload release APK artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: NoteKeeper-apk-release
+      #     path: bin/*.apk
+      #     if-no-files-found: error
+      #     retention-days: 30
